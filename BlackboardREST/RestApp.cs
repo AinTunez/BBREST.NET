@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace BlackboardREST
+namespace BBREST
 {
     public class RestApp
     {
@@ -37,12 +37,12 @@ namespace BlackboardREST
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public async Task<HttpResponseMessage> Request(string method, string url, object jsonObject, bool hasFailed = false)
+        public async Task<ResponseHandler> Request(string method, string url, object jsonObject, bool hasFailed = false)
         {
             return await Request(method, url, JsonConvert.SerializeObject(jsonObject));
         }
 
-        public async Task<HttpResponseMessage> Request(string method, string url, string jsonString, bool hasFailed = false)
+        public async Task<ResponseHandler> Request(string method, string url, string jsonString, bool hasFailedOnce = false)
         {
             if (String.IsNullOrEmpty(bbAccessToken)) await SetToken();
             
@@ -50,10 +50,7 @@ namespace BlackboardREST
             {
                 Method = new HttpMethod(method.ToUpper()),
                 RequestUri = new Uri(bbOrigin + url),
-                Headers =
-                {
-                    { "Authorization", "Bearer " + bbAccessToken},
-                },
+                Headers = {{ "Authorization", "Bearer " + bbAccessToken}},
             };
 
             if (method.ToUpper() != "GET") requestMessage.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -61,12 +58,10 @@ namespace BlackboardREST
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 bbAccessToken = null;
-                if (!hasFailed) return await Request(method, url, jsonString, true);
-                else return response;
-            } else
-            {
-                return response;
+                if (!hasFailedOnce) return await Request(method, url, jsonString, true);
+                else throw new Exception("Unable to retrieve access token.");
             }
+            return new ResponseHandler(response);
         }
         
         public async Task SetToken()
@@ -91,5 +86,26 @@ namespace BlackboardREST
                 bbAccessToken = o.access_token;
             }
         }
+    }
+
+    public class ResponseHandler
+    {
+        public HttpResponseMessage Response;
+        public HttpContent Content { get => Response.Content; }
+        
+        public ResponseHandler(HttpResponseMessage responseMessage)
+        {
+            Response = responseMessage;
+        }
+
+        public async Task<string> ReadContentAsync()
+        {
+            using (var reader = new StreamReader(await Content.ReadAsStreamAsync()))
+            {
+                return await reader.ReadToEndAsync();
+               
+            }
+        }
+        
     }
 }
