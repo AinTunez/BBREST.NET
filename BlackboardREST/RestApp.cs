@@ -13,23 +13,15 @@ namespace BBREST
     public class RestApp
     {
         string bbOrigin = null;
-        string bbKey = null;
-        string bbSecret = null;
         string bbAccessToken = null;
         string bbAuth = null;
         HttpClient client = new HttpClient();
 
-        public RestApp(string origin, string pkey, string psecret)
+        public RestApp(string origin, string bbKey, string bbSecret)
         {
             if (!origin.EndsWith("/")) origin += "/";
             bbOrigin = origin + "learn/api/public/";
-            bbKey = pkey;
-            bbSecret = psecret;
             bbAuth = "Basic " + Base64Encode(bbKey + ":" + bbSecret);
-
-            var handler = new HttpClientHandler();
-            handler.Credentials = new NetworkCredential(bbKey, bbSecret);
-            handler.UseDefaultCredentials = true;
         }
 
         private static string Base64Encode(string plainText)
