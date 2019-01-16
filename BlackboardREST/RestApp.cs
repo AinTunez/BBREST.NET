@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.IO;
-using System.Dynamic;
+using Newtonsoft.Json;
 
 namespace BlackboardREST
 {
@@ -38,35 +37,40 @@ namespace BlackboardREST
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        private async Task MakeRequest(string url, HttpMethod method, params string[] properties)
+        public async Task<HttpResponseMessage> Request(string method, string url, object jsonObject, bool hasFailed = false)
+        {
+            return await Request(method, url, JsonConvert.SerializeObject(jsonObject));
+        }
+
+        public async Task<HttpResponseMessage> Request(string method, string url, string jsonString, bool hasFailed = false)
         {
             if (String.IsNullOrEmpty(bbAccessToken)) await SetToken();
-
-            var content = new List<KeyValuePair<string, string>>();
-            for (int i = 0; i < properties.Length; i+=2)
-            {
-                string property = properties[i];
-                string value = properties[i + 1];
-                content.Add(new KeyValuePair<string, string>(property, value));
-            }
-
+            
             var requestMessage = new HttpRequestMessage
             {
-                Method = method,
-                RequestUri = new Uri((bbOrigin + url).Replace("//","/")),
+                Method = new HttpMethod(method.ToUpper()),
+                RequestUri = new Uri(bbOrigin + url),
                 Headers =
                 {
-                    { "Authorization", "Bearer " + bbAccessToken },
-                    { "content-type", "application/json" },
+                    { "Authorization", "Bearer " + bbAccessToken},
                 },
-                Content = new FormUrlEncodedContent(content)
             };
+
+            if (method.ToUpper() != "GET") requestMessage.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var response = client.SendAsync(requestMessage).Result;
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                bbAccessToken = null;
+                if (!hasFailed) return await Request(method, url, jsonString, true);
+                else return response;
+            } else
+            {
+                return response;
+            }
         }
         
-        private async Task SetToken()
+        public async Task SetToken()
         {
-            string requestURL = bbOrigin + "/learn/api/public/v1/oauth2/token";
             var requestContent = new FormUrlEncodedContent(new[] {
                 new KeyValuePair<string, string>("grant_type", "client_credentials"),
             });
@@ -74,18 +78,18 @@ namespace BlackboardREST
             var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(bbOrigin + "/learn/api/public/v1/oauth2/token"),
-                Headers = {{ "Authorization", bbAuth }}
+                RequestUri = new Uri(bbOrigin + "/v1/oauth2/token"),
+                Headers = { { "Authorization", bbAuth } },
+                Content = requestContent
             };
 
             var response = client.SendAsync(requestMessage).Result;
 
             using (var reader = new StreamReader(await response.Content.ReadAsStreamAsync()))
             {
-                Console.WriteLine(await reader.ReadToEndAsync());
+                dynamic o = JsonConvert.DeserializeObject(await reader.ReadToEndAsync());
+                bbAccessToken = o.access_token;
             }
-
-            Console.ReadLine();
         }
     }
 }
