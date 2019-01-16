@@ -19,9 +19,10 @@ namespace BBREST
         string bbAuth = null;
         HttpClient client = new HttpClient();
 
-        public RestApp(string domain, string pkey, string psecret)
+        public RestApp(string origin, string pkey, string psecret)
         {
-            bbOrigin = domain + "/learn/api/public/";
+            if (!origin.EndsWith("/")) origin += "/";
+            bbOrigin = origin + "learn/api/public/";
             bbKey = pkey;
             bbSecret = psecret;
             bbAuth = "Basic " + Base64Encode(bbKey + ":" + bbSecret);
@@ -37,8 +38,9 @@ namespace BBREST
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public async Task<ResponseHandler> Request(string method, string url, object jsonObject, bool hasFailed = false)
+        public async Task<ResponseHandler> Request(string method, string url, object jsonObject = null, bool hasFailed = false)
         {
+            if (jsonObject == null) return await Request(method, url, "{}");
             return await Request(method, url, JsonConvert.SerializeObject(jsonObject));
         }
 
