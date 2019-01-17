@@ -20,8 +20,8 @@ RestApp myRestApp = new RestApp(origin, key, secret);
 
 ### RestApp.Request
 
-The `RestApp` class has only one public method –– the `Request` method. All authentication is handled
-automatically refreshing the access token as needed. `Request` operates on this syntax:
+The `RestApp` class has only one public method –– the `Request` method. The access token is refreshed
+automatically as needed. `Request` operates on this syntax:
 
 ```c#
 myRestApp.Request(string method, string path, (string|object) jsonObject);
