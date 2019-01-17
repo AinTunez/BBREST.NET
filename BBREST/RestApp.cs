@@ -58,7 +58,7 @@ namespace BBREST
             return new BlackboardResponse(response);
         }
         
-        public async Task SetToken()
+        private async Task SetToken()
         {
             var requestContent = new FormUrlEncodedContent(new[] {
                 new KeyValuePair<string, string>("grant_type", "client_credentials"),
@@ -93,7 +93,6 @@ namespace BBREST
             using (var reader = new StreamReader(await Content.ReadAsStreamAsync()))
             {
                 return await reader.ReadToEndAsync();
-               
             }
         }
         
