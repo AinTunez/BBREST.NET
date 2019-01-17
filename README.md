@@ -17,7 +17,7 @@ RestApp mySchool = new RestApp(origin, key, secret);
 ```
 ## Usage
 
-### RestApp.Request
+### `RestApp.Request`
 
 The `RestApp` class has only one public method –– the `Request` method. The access token is refreshed
 automatically as needed. `Request` operates on this syntax:
@@ -54,7 +54,7 @@ string myJsonString = @"{""name"":""New Course Name""}";
 await mySchool.Request("PATCH", myEndpointPath, myJsonString);
 ```
 
-### RestApp.Request
+### `BlackboardResponse`
 
 `Request` will return an instance of the `BlackboardResponse` class. It contains two properties:
 
