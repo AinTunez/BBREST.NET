@@ -30,13 +30,13 @@ namespace BBREST
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public async Task<ResponseHandler> Request(string method, string url, object jsonObject = null, bool hasFailed = false)
+        public async Task<BlackboardResponse> Request(string method, string url, object jsonObject = null, bool hasFailed = false)
         {
             if (jsonObject == null) return await Request(method, url, "{}");
             return await Request(method, url, JsonConvert.SerializeObject(jsonObject));
         }
 
-        public async Task<ResponseHandler> Request(string method, string url, string jsonString, bool hasFailedOnce = false)
+        public async Task<BlackboardResponse> Request(string method, string url, string jsonString, bool hasFailedOnce = false)
         {
             if (String.IsNullOrEmpty(bbAccessToken)) await SetToken();
             
@@ -55,7 +55,7 @@ namespace BBREST
                 if (!hasFailedOnce) return await Request(method, url, jsonString, true);
                 else throw new Exception("Unable to retrieve access token.");
             }
-            return new ResponseHandler(response);
+            return new BlackboardResponse(response);
         }
         
         public async Task SetToken()
@@ -73,7 +73,6 @@ namespace BBREST
             };
 
             var response = client.SendAsync(requestMessage).Result;
-
             using (var reader = new StreamReader(await response.Content.ReadAsStreamAsync()))
             {
                 dynamic o = JsonConvert.DeserializeObject(await reader.ReadToEndAsync());
@@ -82,15 +81,12 @@ namespace BBREST
         }
     }
 
-    public class ResponseHandler
+    public class BlackboardResponse
     {
         public HttpResponseMessage Response;
         public HttpContent Content { get => Response.Content; }
-        
-        public ResponseHandler(HttpResponseMessage responseMessage)
-        {
-            Response = responseMessage;
-        }
+
+        public BlackboardResponse(HttpResponseMessage responseMessage) => Response = responseMessage;
 
         public async Task<string> ReadContentAsync()
         {
