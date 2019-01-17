@@ -1,6 +1,6 @@
 # BBREST.NET
 
-This module allows for easy interaction with [Blackboard Learn REST APIs](https://developer.blackboard.com/portal/displayApi) in application code.
+This library allows for easy interaction with [Blackboard Learn REST APIs](https://developer.blackboard.com/portal/displayApi) in application code.
 
 ## Setup
 Declare the library.
