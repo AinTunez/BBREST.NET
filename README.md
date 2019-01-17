@@ -60,6 +60,7 @@ await mySchool.Request("PATCH", myEndpointPath, myJsonString);
 `Request` will return an instance of the `BlackboardResponse` class. It contains two properties:
 
 `HttpResponse Response` –– the `HttpResponse` returned by the request.
+
 `HttpContent Content` –– the `HttpContent` inside `Response`.
 
 It also contains one helper method:
