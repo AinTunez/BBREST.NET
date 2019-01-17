@@ -1,5 +1,4 @@
 # BBREST.NET
-# bb-rest
 
 This module allows for easy interaction with [Blackboard Learn REST APIs](https://developer.blackboard.com/portal/displayApi) in application code.
 
@@ -59,13 +58,12 @@ await mySchool.Request("PATCH", myEndpointPath, myJsonString);
 
 `Request` will return an instance of the `BlackboardResponse` class. It contains two properties:
 
-`HttpResponse Response` –– the `HttpResponse` returned by the request.
-
-`HttpContent Content` –– the `HttpContent` inside `Response`.
+* `HttpResponse Response` –– the `HttpResponse` returned by the request.
+* `HttpContent Content` –– the `HttpContent` inside `Response`.
 
 It also contains one helper method:
 
-`string ReadContentAsync()` –– asyncronously returns the JSON string in the response.
+* `string ReadContentAsync()` –– asyncronously returns the JSON string in the response.
 
 #### Example
 
