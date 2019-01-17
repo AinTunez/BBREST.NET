@@ -13,7 +13,7 @@ string key = "myApplicationKey";
 string secret = "myApplicationSecret";
 string origin = "https://myproductionsite.com";
 
-RestApp myRestApp = new RestApp(origin, key, secret);
+RestApp mySchool = new RestApp(origin, key, secret);
 ```
 ## Usage
 
@@ -23,7 +23,7 @@ The `RestApp` class has only one public method –– the `Request` method. The 
 automatically as needed. `Request` operates on this syntax:
 
 ```c#
-myRestApp.Request(string method, string path, (string|object) jsonObject);
+mySchool.Request(string method, string path, (string|object) jsonObject);
 ```
 ##### `method`
 
