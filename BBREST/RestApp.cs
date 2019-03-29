@@ -29,6 +29,12 @@ namespace BBREST
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
+        public async Task<BlackboardResponse> POST(string url, dynamic json = null) => await Request("POST", url, json);
+        public async Task<BlackboardResponse> PATCH(string url, dynamic json = null) => await Request("PATCH", url, json);
+        public async Task<BlackboardResponse> PUT(string url, dynamic json = null) => await Request("PUT", url, json);
+        public async Task<BlackboardResponse> DELETE(string url, dynamic json = null) => await Request("DELETE", url, json);
+        public async Task<BlackboardResponse> GET(string url) => await Request("GET", url);
+
         public async Task<BlackboardResponse> Request(string method, string url, object jsonObject = null, bool hasFailed = false)
         {
             if (jsonObject == null) return await Request(method, url, "{}");
@@ -37,7 +43,7 @@ namespace BBREST
 
         public async Task<BlackboardResponse> Request(string method, string url, string jsonString, bool hasFailedOnce = false)
         {
-            if (String.IsNullOrEmpty(bbAccessToken)) await SetToken();
+            if (string.IsNullOrEmpty(bbAccessToken)) await SetToken();
             
             var requestMessage = new HttpRequestMessage
             {
