@@ -23,21 +23,20 @@ namespace BBREST
             bbAuth = "Basic " + Base64Encode(bbKey + ":" + bbSecret);
         }
 
-        private static string Base64Encode(string plainText)
+        private string Base64Encode(string plainText)
         {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
         }
 
         public async Task<BlackboardResponse> Request(string method, string url, object jsonObject = null, bool hasFailed = false)
         {
-            if (jsonObject == null) return await Request(method, url, "{}");
-            return await Request(method, url, JsonConvert.SerializeObject(jsonObject));
+            return await Request(method, url, jsonObject ?? "{}");
         }
 
         public async Task<BlackboardResponse> Request(string method, string url, string jsonString, bool hasFailedOnce = false)
         {
-            if (String.IsNullOrEmpty(bbAccessToken)) await SetToken();
+            if (string.IsNullOrEmpty(bbAccessToken)) await SetToken();
             
             var requestMessage = new HttpRequestMessage
             {
