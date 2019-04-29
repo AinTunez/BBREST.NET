@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>BBREST</id>
+    <version>1.0.0</version>
+    <title>BBREST.NET</title>
+    <authors>AinTunez</authors>
+    <owners>AinTunez</owners>
+    <description>Allows for easy interaction with Blackboard Learn REST APIs in application code.</description>
+	<projectUrl>https://github.com/C-Weinstein/BBREST.NET</projectUrl>
+  </metadata>
+</package>
