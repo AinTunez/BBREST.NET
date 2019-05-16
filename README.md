@@ -19,12 +19,16 @@ RestApp mySchool = new RestApp(origin, key, secret);
 
 ### `RestApp.Request`
 
-The `RestApp` class has only one public method –– the `Request` method. The access token is refreshed
+The `RestApp` class has only one true public method –– the `Request` method. The access token is refreshed
 automatically as needed. `Request` operates on this syntax:
 
 ```c#
 mySchool.Request(string method, string path, (string|object) jsonObject);
 ```
+
+The other public methods (`GET`,`POST`, `PATCH`,`PUT`, and `DELETE`) are shorthand for entering
+the corresponding string as the `method` argument. 
+
 ##### `method`
 
 The `method` argument is a string referring to any of five HTTP verbs: `GET`,`POST`,
