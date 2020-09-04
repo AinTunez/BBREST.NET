@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.IO;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace BBREST
 {
@@ -37,10 +38,10 @@ namespace BBREST
 
         public async Task<BlackboardResponse> Request(string method, string url, object jsonObject = null, bool hasFailed = false)
         {
-            return await Request(method, url, jsonObject ?? "{}");
+            return await RequestInner(method, url, jsonObject != null ? JsonConvert.SerializeObject(jsonObject) : @"{ ""blank"": """"}");
         }
 
-        public async Task<BlackboardResponse> Request(string method, string url, string jsonString, bool hasFailedOnce = false)
+        public async Task<BlackboardResponse> RequestInner(string method, string url, string jsonString, bool hasFailedOnce = false)
         {
             if (string.IsNullOrEmpty(bbAccessToken)) await SetToken();
             
